@@ -156,7 +156,7 @@ export default function LoginPage() {
       </div>
 
       <footer className="pointer-events-none absolute inset-x-0 bottom-0 z-10 px-6 pb-5 text-center">
-        <p className="rotulo !mb-0 !text-white/40">tiktok.lidialabs.com</p>
+        <p className="rotulo !mb-0 !text-white/40">tram-gamma.vercel.app</p>
       </footer>
     </div>
   );
