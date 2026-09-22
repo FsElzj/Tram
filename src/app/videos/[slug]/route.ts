@@ -1,4 +1,4 @@
-import { createClient } from "@supabase/supabase-js";
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { NextResponse, type NextRequest } from "next/server";
 
 export const dynamic = "force-dynamic";
@@ -7,9 +7,14 @@ export const dynamic = "force-dynamic";
 // Se les redirige igual, pero no cuentan como visita.
 const BOTS = /bot|crawl|spider|slurp|preview|facebookexternalhit|whatsapp|telegram|discord|slack|embedly|curl|wget|python|headless|lighthouse|bytespider/i;
 
-const sb = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!, {
-  auth: { persistSession: false },
-});
+// Se crea al primer request, no al cargar el módulo: en el build no hay variables de entorno.
+let client: SupabaseClient | null = null;
+function sb() {
+  client ??= createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!, {
+    auth: { persistSession: false },
+  });
+  return client;
+}
 
 export async function GET(request: NextRequest, ctx: RouteContext<"/videos/[slug]">) {
   const { slug } = await ctx.params;
@@ -20,7 +25,7 @@ export async function GET(request: NextRequest, ctx: RouteContext<"/videos/[slug
     request.headers.get("x-vercel-ip-country") ?? request.headers.get("cf-ipcountry") ?? "XX";
   const count = !BOTS.test(request.headers.get("user-agent") ?? "") && request.method === "GET";
 
-  const { data: destination, error } = await sb.rpc("resolve_link", {
+  const { data: destination, error } = await sb().rpc("resolve_link", {
     p_slug: slug,
     p_country: country,
     p_count: count,
