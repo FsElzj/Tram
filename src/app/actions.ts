@@ -23,7 +23,13 @@ export async function login(_: unknown, form: FormData) {
     email: String(form.get("email") ?? "").trim(),
     password: String(form.get("password") ?? ""),
   });
-  if (error) return { error: "Correo o contraseña incorrectos" };
+  if (error) {
+    return {
+      error: error.message.toLowerCase().includes("invalid")
+        ? "Ese correo y esa contraseña no coinciden. Revísalos e inténtalo otra vez."
+        : "No se pudo entrar: " + error.message,
+    };
+  }
   redirect("/dashboard");
 }
 

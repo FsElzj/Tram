@@ -1,16 +1,76 @@
 @import "tailwindcss";
 
 @theme inline {
-  --font-sans: var(--font-sans);
-  --font-mono: var(--font-mono);
+  --font-sans: var(--font-montserrat), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
 }
 
-.input {
-  @apply w-full rounded-lg border border-neutral-800 bg-neutral-900 px-3 py-2.5 text-sm outline-none placeholder:text-neutral-500 focus:border-neutral-500;
+@theme {
+  --color-rojo: #d7263d;      /* rojo de acción; blanco encima da 4.9:1 */
+  --color-rojo-deep: #2b0709; /* fondo de la entrada */
+  --color-rosa: #ffb3b0;      /* resaltes y errores sobre oscuro */
 }
-.btn {
-  @apply inline-flex items-center justify-center rounded-lg bg-white px-4 py-2.5 text-sm font-medium text-neutral-950 hover:bg-neutral-200 disabled:opacity-50;
+
+@layer components {
+  .input {
+    @apply w-full rounded-lg border border-neutral-800 bg-neutral-900 px-3 py-2.5 text-sm outline-none placeholder:text-neutral-500 focus:border-neutral-500;
+  }
+  .btn {
+    @apply inline-flex items-center justify-center rounded-lg bg-white px-4 py-2.5 text-sm font-medium text-neutral-950 hover:bg-neutral-200 disabled:opacity-50;
+  }
+  .btn-ghost {
+    @apply inline-flex items-center justify-center rounded-lg border border-neutral-800 px-3 py-2 text-sm text-neutral-300 hover:bg-neutral-900;
+  }
+
+  /* --- Entrada ----------------------------------------------------------- */
+  .rotulo {
+    display: block;
+    margin-bottom: .25rem;
+    font-size: .625rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: .22em;
+    color: rgba(255, 255, 255, .6);
+  }
+  .entrada .hline,
+  .entrada .vline { position: absolute; background: rgba(255, 179, 176, .1); }
+  .entrada .hline {
+    left: 0; right: 0; height: 1px;
+    transform: scaleX(0);
+    animation: traza-x 1s cubic-bezier(.22, .61, .36, 1) forwards;
+  }
+  .entrada .vline {
+    top: 0; bottom: 0; width: 1px;
+    transform: scaleY(0); transform-origin: 50% 0;
+    animation: traza-y 1.1s cubic-bezier(.22, .61, .36, 1) forwards;
+  }
+  .entrada .sube {
+    opacity: 0;
+    transform: translateY(16px);
+    animation: sube .7s cubic-bezier(.22, .61, .36, 1) forwards;
+  }
+  .entrada :focus-visible { outline-color: var(--color-rosa); }
 }
-.btn-ghost {
-  @apply inline-flex items-center justify-center rounded-lg border border-neutral-800 px-3 py-2 text-sm text-neutral-300 hover:bg-neutral-900;
+
+@media (prefers-reduced-motion: reduce) {
+  .entrada .hline, .entrada .vline, .entrada .sube { animation: none; opacity: 1; transform: none; }
 }
+
+/* Chrome pinta el autorrelleno de azul claro con !important; va fuera de @layer
+   para que no lo pise una utilidad de box-shadow (en Tailwind v4 la capa gana). */
+.entrada input:-webkit-autofill,
+.entrada input:-webkit-autofill:hover,
+.entrada input:-webkit-autofill:focus,
+.entrada input:-webkit-autofill:active {
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-box-shadow: 0 0 0 1000px var(--color-rojo-deep) inset;
+  box-shadow: 0 0 0 1000px var(--color-rojo-deep) inset;
+  -webkit-text-fill-color: #fff;
+  caret-color: #fff;
+  transition: background-color 9999s ease-out;
+}
+
+@keyframes traza-x { to { transform: scaleX(1) } }
+@keyframes traza-y { to { transform: scaleY(1) } }
+@keyframes sube { to { opacity: 1; transform: none } }

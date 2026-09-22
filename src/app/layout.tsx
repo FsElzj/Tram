@@ -1,15 +1,17 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Montserrat, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
-const sans = Geist({ variable: "--font-sans", subsets: ["latin"] });
-const mono = Geist_Mono({ variable: "--font-mono", subsets: ["latin"] });
+const sans = Montserrat({ variable: "--font-montserrat", subsets: ["latin"] });
+const mono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Looma Links",
+  title: "Entrar · Lidia Labs Links",
   description: "Enlaces cortos con métricas por país",
   robots: { index: false, follow: false },
 };
+
+export const viewport = { themeColor: "#2b0709" };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
